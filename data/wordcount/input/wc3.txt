@@ -1,0 +1,4 @@
+1,zs,doit29,80|5,aa,doit30,95|9,ee,doit30,100
+2,ls,doit29,90|6,bb,doit30,90
+3,ww,doit30,70|7,cc,doit29,80
+4,zl,doit30,95|8,dd,doit29,90

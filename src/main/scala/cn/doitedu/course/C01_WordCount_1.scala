@@ -4,7 +4,7 @@ import org.apache.log4j.{Level, Logger}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
 
-object C01_WordCount {
+object C01_WordCount_1 {
   def main(args: Array[String]): Unit = {
 
     // 代码中临时设置日志打印级别
