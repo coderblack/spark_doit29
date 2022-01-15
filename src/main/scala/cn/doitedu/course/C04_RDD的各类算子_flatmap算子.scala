@@ -13,9 +13,14 @@ object C04_RDD的各类算子_flatmap算子 {
 
     val sc = new SparkContext(conf)
 
-    val rdd1 = sc.textFile("data/wordcount/input/wc3.txt")
-
     // 1,zs,doit29,80|5,aa,doit30,95|9,ee,doit30,100
+    val rdd1 = sc.textFile("data/wordcount/input/wc3.txt")
+    /**
+     * 需求背景：
+     *   把原始数据变成：  一行一个Student对象
+     */
+
+
     // 步骤1： 把字符串映射成  List[Student]
     val rdd2: RDD[List[Student]] = rdd1.map(line => {
       val arr = line.split("\\|")
@@ -52,24 +57,9 @@ object C04_RDD的各类算子_flatmap算子 {
         val fields = s.split(",")
         Student(fields(0).toInt,fields(1),fields(2),fields(3).toDouble)
       })
-
       studentArr
     })
     rdd4.foreach(println)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     sc.stop()
   }
