@@ -4,8 +4,6 @@ import org.apache.log4j.{Level, Logger}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
 
-import scala.io.Source
-
 object C01_WordCount {
   def main(args: Array[String]): Unit = {
 
@@ -22,7 +20,7 @@ object C01_WordCount {
     val sc = new SparkContext(conf)
 
     // 第一步：创建一个 “数据源” 的  RDD（“迭代器”）
-    val rdd1: RDD[String] = sc.textFile("data/wordcount/input/", 2)
+    val rdd1: RDD[String] = sc.textFile("data/wordcount/input/wc.txt", 2)
     // rdd.foreach(println)
 
     // 切单词并打散
