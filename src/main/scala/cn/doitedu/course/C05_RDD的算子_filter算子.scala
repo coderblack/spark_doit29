@@ -3,7 +3,7 @@ package cn.doitedu.course
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
 
-object C05_RDD的各类算子_filter算子 {
+object C05_RDD的算子_filter算子 {
 
   def main(args: Array[String]): Unit = {
 

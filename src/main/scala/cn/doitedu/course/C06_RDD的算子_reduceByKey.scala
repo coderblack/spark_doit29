@@ -3,7 +3,7 @@ package cn.doitedu.course
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.rdd.RDD
 
-object C06_RDD的各类算子_reduceByKey {
+object C06_RDD的算子_reduceByKey {
 
   def main(args: Array[String]): Unit = {
     /**

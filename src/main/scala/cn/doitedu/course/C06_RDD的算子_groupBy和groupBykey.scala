@@ -3,7 +3,7 @@ package cn.doitedu.course
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.rdd.RDD
 
-object C06_RDD的各类算子_groupBy和groupBykey {
+object C06_RDD的算子_groupBy和groupBykey {
   def main(args: Array[String]): Unit = {
 
     /**
