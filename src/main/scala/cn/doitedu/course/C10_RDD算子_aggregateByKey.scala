@@ -29,9 +29,11 @@ object C10_RDD算子_aggregateByKey {
     println("------------------------------")
 
     // 拓展aggregateByKey
+    // 参数1： 初始值
+    // 参数2： 局部聚合函数（累计值，元素值）=>新累计值
+    // 参数3： 全局聚合函数（累计值1，累计值2）=> 新累计值
     val res2 = rdd1.aggregateByKey[Int](0)((acc, ele) => acc + ele, (acc1, acc2) => acc1 + acc2)
     res2.foreach(println)
-
 
 
     println("------------------------------")
@@ -46,6 +48,9 @@ object C10_RDD算子_aggregateByKey {
     //  把上面的数据按相同字母分组聚合成
     //  a,List(1,2)
     //  b,List(3,1,2)
+    val res4 = rdd1.aggregateByKey[List[Int]](Nil)((lst:List[Int],ele:Int)=>{ele :: lst},(lst1:List[Int],lst2:List[Int])=>lst1 ::: lst2)
+    res4.foreach(println)
+
 
 
 
