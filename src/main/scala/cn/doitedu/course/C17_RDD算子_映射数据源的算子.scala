@@ -1,5 +1,6 @@
 package cn.doitedu.course
 
+import org.apache.spark.serializer.KryoSerializer
 import org.apache.spark.rdd.JdbcRDD
 import org.apache.spark.{SparkConf, SparkContext}
 
@@ -16,6 +17,7 @@ object C17_RDD算子_映射数据源的算子 {
     val conf = new SparkConf()
     conf.setMaster("local")
     conf.setAppName("")
+    conf.set("spark.serializer","org.apache.spark.serializer.KryoSerializer")
 
     val sc = new SparkContext(conf)
 
