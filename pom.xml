@@ -6,7 +6,12 @@
 
     <groupId>cn.doitedu</groupId>
     <artifactId>spark_doit29</artifactId>
+    <packaging>pom</packaging>
     <version>1.0</version>
+    <modules>
+        <module>myspark</module>
+        <module>wordcount</module>
+    </modules>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

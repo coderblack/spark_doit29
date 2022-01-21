@@ -55,7 +55,6 @@ object C19_SHUFFLE算子不一定产生Shuffle {
     val x4_2 = x3_2.groupByKey(2)
     x4_2.count()
 
-
     Thread.sleep(Long.MaxValue)
     sc.stop()
   }
