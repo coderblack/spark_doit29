@@ -1,12 +1,18 @@
 package cn.doitedu.course
 
+import org.apache.hadoop.conf.Configuration
+import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
+
+import java.io.{BufferedReader, InputStreamReader}
+import java.sql.DriverManager
+import scala.collection.mutable
 
 case class BaseStu(id:Int, name:String, term:String, score:Int)
 case class ExtraStu(id:Int,phone:String,city:String)
 
-object C20_广播变量 {
+object C20_广播变量与Join方式 {
   def main(args: Array[String]): Unit = {
 
     val conf = new SparkConf
@@ -77,30 +83,97 @@ object C20_广播变量 {
 
       res.saveAsTextFile("data/mapjoin/")
 
-
-
-
     }
 
 
     /**
      * 与上面的方法逻辑一样
      * 区别是： 构造小表hashmap的来源、手段不同
-     * 要求，小表的数据从一个mysql服务器的表来
+     * 要求，小表的数据从一个mysql服务器的表来 abc.b表
      */
     def mapSideJoin2():Unit = {
 
+      // 设法去获取小表数据
+      val conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/abc", "root", "123456")
+      val statement = conn.prepareStatement("select * from b")
+      val resultSet = statement.executeQuery()
 
+      // var extraInfoMap = Map.empty[Int,ExtraStu]
+      val extraInfoMap = new mutable.HashMap[Int, ExtraStu]()
+      // 从jdbc的返回结果中获取数据不断封装成bean对象，然后放入hashmap
+      while(resultSet.next()){
+        val id = resultSet.getInt(1)
+        val city = resultSet.getString(2)
+        val phone = resultSet.getString("score")
+        extraInfoMap.put(id,ExtraStu(id,phone,city))
+      }
+
+      // 将封装小表数据的 hashmap  广播出去
+      val bc = sc.broadcast(extraInfoMap)
+
+
+      val res = rdd1.mapPartitions(iter=>{
+        val 小表Map = bc.value
+
+        iter.map(line=>{
+          // 切分大表数据
+          val splits = line.split(",")
+
+          // 根据id去小表map中查询小表数据
+          val extraStu = 小表Map.get(splits(0).toInt).get
+
+          // 拼接两表的数据返回
+          line + ","+ extraStu.phone + "," + extraStu.city
+
+        })
+      })
+
+      res.saveAsTextFile("data/join2/")
+
+
+      sc.stop()
     }
 
 
+    /**
+     * 与上面的方法逻辑一样
+     * 区别是： 构造小表hashmap的来源、手段不同
+     * 要求，小表的数据是在hdfs的文件中
+     */
+    def mapSideJoin3():Unit = {
+      // 设法从HDFS去获取小表数据
+      val fs = FileSystem.get(new Configuration())  // hdfs的客户端对象
+      val in = fs.open(new Path("hdfs://doit01:8020/wc4/wc4.txt"))
+      val br = new BufferedReader(new InputStreamReader(in))
+      var line:String = null
+
+      // 读文件，将数据封装到hashmap中
+      val extraInfoMap = new mutable.HashMap[Int, ExtraStu]()
+      do{
+        line = br.readLine()
+        val splits = line.split(",")
+        extraInfoMap.put(splits(0).toInt,ExtraStu(splits(0).toInt,splits(1),splits(2)))
+      }while( line!=null)
+
+      // 广播出去
+      val bc = sc.broadcast(extraInfoMap)
 
 
+      // 构建DAG，提交job
+      val res = rdd1.map(line=>{
+        // 从广播变量获取小表数据hashMap
+        val 小表数据HashMap = bc.value
 
+        // 从大表数据获取用户id,根据id查询小表数据
+        val splits = line.split(",")
+        val extraStu = 小表数据HashMap.get(splits(0).toInt).get
 
+        // 拼接结果
+        line + ","+ extraStu.phone + "," + extraStu.city
+      })
+      res.saveAsTextFile("data/join3")
+    }
 
-
-    sc.stop()
   }
 
 }
