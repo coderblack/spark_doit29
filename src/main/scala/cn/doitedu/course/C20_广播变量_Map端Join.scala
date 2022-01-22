@@ -51,8 +51,47 @@ object C20_广播变量 {
      *      spark中还有更方便的手段：利用广播变量（本质就是不用传文件让task去加载，而是直接将小表数据放在一个集合中，传给task）
      *
      */
+    def mapSideJoin1():Unit={
+
+      // 先将小表数据装入一个HashMap中
+      val array: Array[String] = rdd2.collect()
+      val extraInfoHashMap = array.map(line => {
+        val arr = line.split(",")
+        (arr(0), ExtraStu(arr(0).toInt, arr(1), arr(2)))
+      }).toMap
+
+      //  把小表的hashmap的对象，广播出去（广播给每一个将来的Executor进程）
+      val bc = sc.broadcast(extraInfoHashMap)
+
+      // 处理流表（大表）
+      val res = rdd1.map(line=>{
+        // 从广播变量中获取小表hashmap
+        val hashMap = bc.value
+
+        // 1,zs,doit29,80
+        val id = line.split(",")(0)
+        val extraStu = hashMap.get(id).get
+
+        line + ","+extraStu.phone + ","+ extraStu.city
+      })
+
+      res.saveAsTextFile("data/mapjoin/")
 
 
+
+
+    }
+
+
+    /**
+     * 与上面的方法逻辑一样
+     * 区别是： 构造小表hashmap的来源、手段不同
+     * 要求，小表的数据从一个mysql服务器的表来
+     */
+    def mapSideJoin2():Unit = {
+
+
+    }
 
 
 
