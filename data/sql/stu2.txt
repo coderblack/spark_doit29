@@ -1,0 +1,7 @@
+{"id":1,"school":{"name":"华中挖掘机大学","graduate":"2010-07-10","rank":1},"name":"aa","info":{"city":"北京","phone":"1334455","obj":"刘亦菲"},"scores":[95,80,86,87],"age":18,"gender":"male"}
+{"id":2,"school":{"name":"华中挖掘机大学","graduate":"2010-07-10","rank":3},"name":"bb","info":{"city":"北京","phone":"1334455","obj":"景甜"},"scores":[92,84,68,77],"age":28,"gender":"male"}
+{"id":3,"school":{"name":"华中厨师大学","graduate":"2010-07-10","rank":3},"name":"cc","info":{"city":"北京","phone":"1334455"},"scores":[97,80,66,87],"age":38,"gender":"male"}
+{"id":4,"school":{"name":"华中厨师大学","graduate":"2010-07-10","rank":5},"name":"dd","info":{"city":"北京","phone":"1334455","jiYou":"张含韵"},"scores":[94,70,96,67],"age":28,"gender":"female"}
+{"id":5,"school":{"name":"华中缝纫大学","graduate":"2010-07-10","rank":4},"name":"ee","info":{"city":"北京","job":"programmer"},"scores":[96,80,66,87],"age":19,"gender":"female"}
+{"id":6,"school":{"name":"华中缝纫大学","graduate":"2010-07-10","rank":6},"name":"ff","info":{"city":"北京","job":"programmer"},"scores":[99,82,68],"age":20.5,"gender":"female"}
+{"id":7,"school":{"name":"华中缝纫大学","graduate":"2010-07-10","rank":7},"name":"gg","info":{"city":"北京","job":"programmer"},"scores":[98,84,66],"age":26,"gender":"female"}
