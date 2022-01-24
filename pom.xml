@@ -31,9 +31,6 @@
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-hive_2.12</artifactId>
             <version>3.1.2</version>
-            <!-- scope表示这个依赖应该存在于程序的编译运行期间的哪个生命周期 -->
-            <!-- provide :表示这个依赖不要放在运行期，因为：运行环境中会有这个依赖-->
-            <!--<scope>provided</scope>-->
         </dependency>
         <dependency>
             <groupId>org.apache.spark</groupId>
