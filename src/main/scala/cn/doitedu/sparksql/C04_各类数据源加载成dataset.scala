@@ -161,6 +161,9 @@ object C04_各类数据源加载成dataset {
 
 
   def df写出成各种数据源(spark:SparkSession):Unit = {
+    /**
+     * 先从文件中，产生一个 dataframe
+     */
     val schema = StructType(Seq(
       StructField("id",DataTypes.IntegerType),
       StructField("name",DataTypes.StringType),
@@ -170,28 +173,33 @@ object C04_各类数据源加载成dataset {
       StructField("scores",DataTypes.createArrayType(DataTypes.IntegerType)),
       StructField("school",DataTypes.createStructType(Array(StructField("name",DataTypes.StringType),StructField("graduate",DataTypes.StringType),StructField("rank",DataTypes.IntegerType))))
     ))
-
     val df: DataFrame = spark.read.schema(schema).json("data/sql/stu2.json")
 
-    // 将df写成一个parquet文件
-    df.write.parquet("data/sql/out-parquet/")
-    df.write.orc("data/sql/out-orc/")
-    df.write.json("data/sql/out-json/")
-    // df.write.csv("data/sql/out-csv/")  简单结构的dataframe才能写成csv文件 ,不支持array、map、struct复合类型
-    val df2 = df.drop("info").drop("scores").drop("school") // 丢弃一个列
-    df2.write.csv("data/sql/out-csv/")
+    /**
+     * 一、df 保存为各类格式的文件
+     */
+    df.write.parquet("data/sql/out-parquet/")   // 1.将df写成一个parquet文件
+    df.write.orc("data/sql/out-orc/")   // 2.将df写成一个orc文件
+    df.write.json("data/sql/out-json/")  // 3.将df写成一个json文件
+    // df.write.csv("data/sql/out-csv/")    // 简单结构的dataframe才能写成csv文件 ,不支持array、map、struct复合类型
+    val df2 = df.drop("info").drop("scores").drop("school") // drop方法:丢弃列
+    df2.write.csv("data/sql/out-csv/")   // 4.将df写成一个 csv 文件
 
-    // 将df写成mysql的表
+    /**
+     * 二、df 保存为 mysql 的表
+     * 如果表不存在，会自动建表
+     * 注意： jdbc中不存在array、map、struct类型
+     */
     val props = new Properties()
     props.setProperty("user","root")
     props.setProperty("password","123456")
 
     val df3 = df.drop("scores", "school", "info")  // 因为jdbc中不存在array、map、struct类型
-    //df2.write.jdbc("jdbc:mysql://localhost:3306/abc","t_x",props)  // 如果表不存在，会自动建表
 
+    // 输出数据时：可以选择保存模式（SaveMode）
     // SaveMode有多种取值:
-    // overWrite ==> 覆盖写入；  append ==> 追加写入 ;
-    // Ignore ==> 如果目标表已存在则啥也不做  ErrorIfExists ==> 如果目标表已存在，就抛个异常给你
+    //    overWrite ==> 覆盖写入；  append ==> 追加写入 ;
+    //    Ignore ==> 如果目标表已存在则啥也不做  ErrorIfExists ==> 如果目标表已存在，就抛个异常给你
     df3.write.mode(SaveMode.Overwrite).jdbc("jdbc:mysql://localhost:3306/abc","t_x",props)
 
   }
