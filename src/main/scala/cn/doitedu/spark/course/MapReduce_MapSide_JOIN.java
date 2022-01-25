@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
 
-public class MapReduce版Map端JOIN {
+public class MapReduce_MapSide_JOIN {
 
     public static class JoinMapper extends Mapper<LongWritable, Text,Text, NullWritable>{
         HashMap<String, String> 小表数据 = new HashMap<>();
