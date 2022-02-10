@@ -1,0 +1,26 @@
+{
+  "account": "isz_neyc",
+  "appid": "cn.doitedu.study.Yiee",
+  "appversion": "9.2",
+  "carrier": "360移动",
+  "deviceid": "EPUKOYSGXJXQ",
+  "devicetype": "HUAWEI-RY-10",
+  "eventid": "search",
+  "ip": "62.59.102.78",
+  "latitude": 33.97015520200176,
+  "longitude": 115.49622809328025,
+  "nettype": "WIFI",
+  "osname": "android",
+  "osversion": "7.8",
+  "properties": {
+    "productId": "00281",
+    "refUrl": "/courses/kylin/c098.html",
+    "pageId": "s",
+    "url": "/search/s?",
+    "keyWord": "物里 袋 前"
+  },
+  "releasechannel": "爱吾游戏宝盒",
+  "resolution": "1024*768",
+  "sessionid": "zyyzspmn",
+  "timestamp": 1639143049288
+}
