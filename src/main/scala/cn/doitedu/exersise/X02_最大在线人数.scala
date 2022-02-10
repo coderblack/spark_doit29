@@ -4,6 +4,13 @@ import org.apache.spark.sql.SparkSession
 
 /**
  * 针对登录登出记录，求最大在线人数
+ *
+ * hive的优化（sparkSql的优化）
+ *    1.从业务设计去优化  （大乘）
+ *    2.从计算逻辑去优化（sql）  （中乘）
+ *    3.参数优化（小乘）
+ *    4.数据倾斜的优化（groupby两阶段聚合，join-map端join-采样倾斜key做膨胀）
+ *
  */
 object X02_最大在线人数 {
   def main(args: Array[String]): Unit = {
@@ -81,15 +88,15 @@ object X02_最大在线人数 {
        u6,6,-1
 
        -- 时间排序 ，然后sum over 标记字段
-       u1,1,1   ==> 1
+       u1,1,1   ==> 2
        u2,1,1   ==> 2
-       u3,2,1   ==> 3
+       u3,2,1   ==> 4
        u5,2,1   ==> 4
-       u1,3,-1  ==> 3
-       u3,3,-1  ==> 2
-       u4,3,1   ==> 3
+       u1,3,-1  ==> 4
+       u3,3,-1  ==> 4
+       u4,3,1   ==> 4
        u6,3,1   ==> 4
-       u2,4,-1  ==> 3
+       u2,4,-1  ==> 2
        u4,4,-1  ==> 2
        u5,5,-1  ==> 1
        u6,6,-1  ==> 0
@@ -101,6 +108,36 @@ object X02_最大在线人数 {
        u2,2,-1   ==> 0
        u3,2,-1   ==> 0
      */
+
+    spark.sql(
+      """
+        |select
+        |  max(cnt) as max_online
+        |from
+        |(
+        |    select
+        |      uid,
+        |      time,
+        |      sum(flag) over(order by time) as cnt
+        |    from (
+        |        select
+        |          uid,
+        |          login_time as time,
+        |          1 as flag
+        |        from df
+        |        union all
+        |        select
+        |          uid,
+        |          logout_time as time,
+        |          -1 as flag
+        |        from df
+        |    ) o
+        |) o
+        |
+        |
+        |""".stripMargin).show(100,false)
+
+
 
 
     spark.close()

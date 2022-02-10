@@ -1,5 +1,6 @@
 package cn.doitedu.exersise
 
+import org.apache.spark.sql.execution.SimpleMode
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.types.{DataTypes, StructField, StructType}
 
@@ -103,6 +104,7 @@ object X01_部门预算 {
         |on o2.departmentid=yusuan.departmentid
         |
         |""".stripMargin)
+
     res2.show(100,false)
 
     spark.close()
