@@ -22,7 +22,14 @@ object X04_综合练习_地理位置映射 {
       .enableHiveSupport()
       .getOrCreate()
 
-    gpsReference2Geohash(spark)
+
+    // 定义一个将gps坐标转成geohash码的函数
+    val gps2GeoHash = (lat:Double,lng:Double)=>GeoHash.geoHashStringWithCharacterPrecision(lat,lng,5)
+    spark.udf.register("gps2geo",gps2GeoHash)
+
+
+    // gpsReference2Geohash(spark)
+    integrateArea(spark)
 
     spark.close()
 
@@ -34,10 +41,6 @@ object X04_综合练习_地理位置映射 {
     props.setProperty("password","123456")
     val df = spark.read.jdbc("jdbc:mysql://localhost:3306/abc", "t_md_areas", props)
     df.createTempView("df")
-
-
-    val gps2GeoHash = (lat:Double,lng:Double)=>GeoHash.geoHashStringWithCharacterPrecision(lat,lng,5)
-    spark.udf.register("gps2geo",gps2GeoHash)
 
     val res = spark.sql(
       """
@@ -75,6 +78,56 @@ object X04_综合练习_地理位置映射 {
 
   }
 
+  def integrateArea(spark:SparkSession): Unit ={
+
+    spark.sql(
+      """
+        | -- join取数
+        |select
+        |  account        ,
+        |  appid          ,
+        |  appversion     ,
+        |  carrier        ,
+        |  deviceid       ,
+        |  devicetype     ,
+        |  eventid        ,
+        |  ip             ,
+        |  latitude       ,
+        |  longitude      ,
+        |  nettype        ,
+        |  osname         ,
+        |  osversion      ,
+        |  properties     ,
+        |  releasechannel ,
+        |  resolution     ,
+        |  sessionid      ,
+        |  `timestamp`    ,
+        |  province       ,
+        |  city           ,
+        |  region
+        |
+        |from
+        |(
+        |  -- 读日志表
+        |  select
+        |     *,gps2geo(latitude,longitude) as geohash
+        |  from doit29.app_log where dt='2021-12-10'
+        |) o1
+        |
+        |join
+        |
+        |(
+        |  -- 读参考地理位置表
+        |  select
+        |    geohash,province,city,region
+        |  from doit29.ref_geo
+        |) o2
+        |on o1.geohash = o2.geohash
+        |
+        |""".stripMargin).show(20,false)
+
+
+  }
 
 
 }
